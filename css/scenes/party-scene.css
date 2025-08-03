@@ -1,0 +1,220 @@
+/* 除法场景专用样式 - party-scene.css */
+/* 确保样式隔离，只影响除法场景 */
+
+/* 除法场景容器样式 - 解决高度和布局问题 */
+.party-scene .scene-container {
+  height: auto !important; /* 强制使用自动高度，覆盖其他固定高度设置 */
+  min-height: 600px; /* 设置最小高度 */
+  overflow: visible !important; /* 确保内容不被裁剪 */
+  position: relative;
+}
+
+/* 除法场景问题文字特殊样式 - 确保正确的定位和样式 */
+.party-scene .question-text {
+  position: absolute !important;
+  max-width: 400px !important;
+  font-size: 16px !important;
+  padding: 12px 20px !important;
+  line-height: 1.4 !important;
+  /* 确保定位属性不被覆盖 */
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  z-index: 15 !important;
+  /* 继承通用样式 */
+  background: linear-gradient(135deg, rgba(255,255,255,0.95), rgba(255,248,220,0.95)) !important;
+  border: 3px solid transparent !important;
+  background-clip: padding-box !important;
+  border-image: linear-gradient(45deg, #FF6B6B, #4ECDC4, #45B7D1) 1 !important;
+  border-radius: 25px !important;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.2), inset 0 2px 0 rgba(255,255,255,0.8) !important;
+  font-family: 'Comic Sans MS', cursive, sans-serif !important;
+  font-weight: bold !important;
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.1) !important;
+}
+
+/* 除法场景答案区域样式 */
+.party-scene .answer-drop-area {
+  position: absolute !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  z-index: 10 !important;
+}
+
+/* 除法场景蛋糕托盘样式 */
+.party-scene .cake-tray {
+  position: absolute;
+  top: 180px;
+  left: 80px;
+  width: 350px;
+  background: #FFD700;
+  border-radius: 15px;
+  padding: 10px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  display: grid;
+  grid-template-columns: repeat(9, 1fr);
+  gap: 4px 6px;
+  justify-items: center;
+  align-items: center;
+  z-index: 5;
+}
+
+/* 除法场景可拖拽蛋糕样式 */
+.party-scene .draggable-cake {
+  font-size: 24px;
+  cursor: grab;
+  transition: transform 0.2s ease;
+  user-select: none;
+}
+
+.party-scene .draggable-cake:hover {
+  transform: scale(1.1);
+}
+
+.party-scene .draggable-cake:active {
+  cursor: grabbing;
+  transform: scale(0.95);
+}
+
+/* 除法场景盘子容器样式 */
+.party-scene .plate-container {
+  position: absolute;
+  z-index: 5;
+}
+
+/* 除法场景盘子标题样式 */
+.party-scene .plate-title {
+  font-size: 11px;
+  font-weight: bold;
+  color: #FF1493;
+  text-align: center;
+  margin-bottom: 5px;
+  height: 15px;
+}
+
+/* 除法场景盘子样式 */
+.party-scene .party-plate {
+  background: white;
+  border: 3px dashed #FF1493;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  transition: all 0.3s ease;
+}
+
+.party-scene .party-plate:hover {
+  border-color: #FF69B4;
+  box-shadow: 0 6px 16px rgba(255,20,147,0.3);
+}
+
+.party-scene .party-plate.drag-over {
+  border-color: #32CD32;
+  background-color: rgba(50,205,50,0.1);
+  transform: scale(1.05);
+}
+
+/* 除法场景盘子内部物品容器样式 */
+.party-scene .plate-items {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-auto-rows: 20px;
+  gap: 2px;
+  justify-items: center;
+  align-items: center;
+  padding: 5px;
+}
+
+/* 除法场景派对装饰样式 */
+.party-scene .party-decoration {
+  position: absolute;
+  font-size: 24px;
+  animation: partyFloat 3s ease-in-out infinite;
+  z-index: 1;
+}
+
+@keyframes partyFloat {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-10px) rotate(5deg); }
+}
+
+/* 除法场景数字拖拽区域样式 */
+.party-scene .number-drag-area {
+  position: absolute;
+  top: 100px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
+}
+
+/* 除法场景响应式设计 */
+@media (max-width: 768px) {
+  .party-scene .scene-container {
+    min-height: 400px;
+  }
+
+  .party-scene .cake-tray {
+    width: 280px;
+    left: 40px;
+    grid-template-columns: repeat(7, 1fr);
+  }
+
+  .party-scene .question-text {
+    max-width: 300px !important;
+    font-size: 14px !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .party-scene .scene-container {
+    min-height: 350px;
+  }
+
+  .party-scene .cake-tray {
+    width: 240px;
+    left: 20px;
+    grid-template-columns: repeat(6, 1fr);
+  }
+
+  .party-scene .question-text {
+    max-width: 250px !important;
+    font-size: 12px !important;
+    padding: 8px 15px !important;
+  }
+}
+
+/* 除法场景响应式设计 */
+@media (max-width: 768px) {
+  .party-scene .scene-container {
+    min-height: 400px;
+  }
+  
+  .party-scene .cake-tray {
+    width: 280px;
+    left: 40px;
+    grid-template-columns: repeat(7, 1fr);
+  }
+  
+  .party-scene .question-text {
+    max-width: 300px !important;
+    font-size: 14px !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .party-scene .scene-container {
+    min-height: 350px;
+  }
+  
+  .party-scene .cake-tray {
+    width: 240px;
+    left: 20px;
+    grid-template-columns: repeat(6, 1fr);
+  }
+  
+  .party-scene .question-text {
+    max-width: 250px !important;
+    font-size: 12px !important;
+    padding: 8px 15px !important;
+  }
+}

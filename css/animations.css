@@ -1,0 +1,227 @@
+/* 动画效果样式文件 */
+
+/* 页面切换动画 */
+.view-transition {
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 拖拽动画 */
+.drag-start {
+  animation: dragStart 0.3s ease-out;
+}
+
+@keyframes dragStart {
+  from {
+    transform: scale(1);
+  }
+  to {
+    transform: scale(1.2);
+  }
+}
+
+.drag-end {
+  animation: dragEnd 0.3s ease-out;
+}
+
+@keyframes dragEnd {
+  from {
+    transform: scale(1.2);
+  }
+  to {
+    transform: scale(1);
+  }
+}
+
+/* 成功反馈动画 */
+.success-feedback {
+  animation: successPulse 0.6s ease-in-out;
+}
+
+@keyframes successPulse {
+  0% {
+    transform: scale(1);
+    background-color: var(--success-color);
+  }
+  50% {
+    transform: scale(1.1);
+    background-color: #90EE90;
+  }
+  100% {
+    transform: scale(1);
+    background-color: var(--success-color);
+  }
+}
+
+/* 错误反馈动画 */
+.error-feedback {
+  animation: errorShake 0.5s ease-in-out;
+}
+
+@keyframes errorShake {
+  0%, 100% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-5px);
+  }
+  75% {
+    transform: translateX(5px);
+  }
+}
+
+/* 按钮点击动画 */
+.btn-click {
+  animation: buttonClick 0.2s ease-in-out;
+}
+
+@keyframes buttonClick {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(0.95);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* 元素浮动提示动画 */
+.float-hint {
+  animation: floatHint 2s ease-in-out infinite;
+}
+
+@keyframes floatHint {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+}
+
+/* 庆祝动画 */
+.celebration {
+  animation: celebrate 1s ease-in-out;
+}
+
+@keyframes celebrate {
+  0% {
+    transform: scale(1) rotate(0deg);
+  }
+  25% {
+    transform: scale(1.1) rotate(5deg);
+  }
+  50% {
+    transform: scale(1.2) rotate(-5deg);
+  }
+  75% {
+    transform: scale(1.1) rotate(3deg);
+  }
+  100% {
+    transform: scale(1) rotate(0deg);
+  }
+}
+
+/* 分数增加动画 */
+@keyframes scoreIncrease {
+  0% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: translateY(-20px) scale(1.2);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-40px) scale(0.8);
+  }
+}
+
+/* 选中状态动画 */
+.selected-animation {
+  animation: selectedPulse 0.5s ease-in-out;
+}
+
+@keyframes selectedPulse {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(74,144,226,0.7);
+  }
+  50% {
+    transform: scale(1.05);
+    box-shadow: 0 0 0 10px rgba(74,144,226,0);
+  }
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(74,144,226,0);
+  }
+}
+
+/* 消息提示动画 */
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-20px);
+  }
+}
+
+/* 按钮禁用状态 */
+.btn.disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  background-color: #ccc !important;
+}
+
+.btn.disabled:hover {
+  transform: none;
+  box-shadow: none;
+}
+
+/* 加载状态动画 */
+.loading-pulse {
+  animation: loadingPulse 1.5s ease-in-out infinite;
+}
+
+@keyframes loadingPulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+/* 错误震动动画 */
+@keyframes errorShake {
+  0%, 100% { transform: translate(-50%, -50%) translateX(0); }
+  10%, 30%, 50%, 70%, 90% { transform: translate(-50%, -50%) translateX(-5px); }
+  20%, 40%, 60%, 80% { transform: translate(-50%, -50%) translateX(5px); }
+}

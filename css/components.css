@@ -1,0 +1,440 @@
+/* 组件样式文件 */
+
+/* 场景容器样式 */
+.scene-container {
+  position: relative;
+  width: 100%;
+  min-height: 600px; /* 改为最小高度，允许动态调整 */
+  height: auto; /* 允许内容撑开高度 */
+  background-size: cover;
+  background-position: center;
+  border-radius: 12px;
+  overflow: visible; /* 改为visible，避免内容被裁剪 */
+  margin: 20px 0;
+}
+
+/* 拖拽元素样式 */
+.drag-element {
+  position: absolute;
+  width: 60px;
+  height: 60px;
+  cursor: grab;
+  transition: transform 0.2s ease;
+  user-select: none;
+  border-radius: 8px;
+  background-size: cover;
+  background-position: center;
+}
+
+.drag-element:hover {
+  transform: scale(1.1);
+}
+
+.drag-element.dragging {
+  cursor: grabbing;
+  transform: scale(1.2);
+  box-shadow: var(--drag-shadow);
+  z-index: 1000;
+}
+
+/* 拖拽目标区域样式 */
+.drop-zone {
+  position: absolute;
+  border: var(--drop-zone-border);
+  border-radius: 8px;
+  background: rgba(255,255,255,0.8);
+  transition: all 0.3s ease;
+  min-width: 80px;
+  min-height: 80px;
+}
+
+.drop-zone.drag-over {
+  background: rgba(74,144,226,0.2);
+  border-color: var(--success-color);
+  transform: scale(1.05);
+}
+
+.drop-zone.filled {
+  background: rgba(126,211,33,0.3);
+  border-color: var(--success-color);
+  border-style: solid;
+}
+
+/* 题目显示区域 */
+.question-display {
+  text-align: center;
+  padding: 20px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  margin: 20px 0;
+}
+
+.question-text {
+  font-size: 24px;
+  font-weight: bold;
+  color: var(--text-color);
+  margin: 0;
+}
+
+/* 游戏控制区域 */
+.game-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  margin: 20px 0;
+}
+
+.score-display {
+  font-size: 18px;
+  font-weight: bold;
+  color: var(--primary-color);
+}
+
+/* 拖拽元素容器 */
+.drag-elements {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding: 20px;
+  background: rgba(255,255,255,0.9);
+  border-radius: 12px;
+  margin: 20px 0;
+}
+
+/* 拖拽目标容器 */
+.drop-zones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  padding: 20px;
+  justify-content: center;
+}
+
+/* 游戏信息栏样式 */
+.game-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(255,255,255,0.2);
+  padding: 10px 20px;
+  border-radius: 8px;
+  backdrop-filter: blur(10px);
+}
+
+.score-info, .progress-info, .streak-info {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-weight: bold;
+}
+
+.score-number {
+  color: var(--secondary-color);
+  font-size: 1.2em;
+}
+
+/* 结果页面样式 */
+.result-main {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.score-summary {
+  background: white;
+  border-radius: 12px;
+  padding: 30px;
+  text-align: center;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  margin-bottom: 30px;
+}
+
+.final-score h2 {
+  color: var(--text-color);
+  margin-bottom: 20px;
+}
+
+.big-number {
+  font-size: 4em;
+  font-weight: bold;
+  color: var(--primary-color);
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+  margin-bottom: 30px;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 20px;
+}
+
+.stat-item {
+  text-align: center;
+}
+
+.stat-label {
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 5px;
+}
+
+.stat-value {
+  font-size: 1.5em;
+  font-weight: bold;
+  color: var(--primary-color);
+}
+
+/* 奖励展示样式 */
+.rewards-section {
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 30px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.rewards-section h3 {
+  text-align: center;
+  color: var(--text-color);
+  margin-bottom: 20px;
+}
+
+.achievements-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+}
+
+.achievement-badge {
+  background: var(--success-color);
+  color: white;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+/* 继续游戏区域 */
+.continue-section {
+  text-align: center;
+}
+
+.continue-section .btn {
+  margin: 0 10px 10px 0;
+}
+
+/* 设置页面样式 */
+.settings-main {
+  max-width: 500px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.settings-section, .data-section {
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.setting-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 0;
+  border-bottom: 1px solid #eee;
+}
+
+.setting-item:last-child {
+  border-bottom: none;
+}
+
+.setting-item label {
+  font-weight: bold;
+  color: var(--text-color);
+}
+
+.setting-item input, .setting-item select {
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+.data-section h3 {
+  margin-bottom: 15px;
+  color: var(--text-color);
+}
+
+.data-section .btn {
+  margin-right: 10px;
+  margin-bottom: 10px;
+}
+
+.back-section {
+  text-align: center;
+}
+
+/* 加载动画样式 */
+.loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10000;
+}
+
+.loading-content {
+  background: white;
+  padding: 40px;
+  border-radius: 12px;
+  text-align: center;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+}
+
+.loading-spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid var(--primary-color);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 0 auto 20px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* 游戏界面样式 */
+.number-input-section {
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+.question-math {
+  text-align: center;
+  padding: 20px;
+  background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+  color: white;
+  border-radius: 12px;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+
+.answer-input {
+  transition: all 0.3s ease;
+}
+
+.answer-input:focus {
+  border-color: var(--success-color);
+  box-shadow: 0 0 0 3px rgba(126,211,33,0.2);
+  transform: scale(1.05);
+}
+
+.answer-input:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.number-pad {
+  background: rgba(255,255,255,0.9);
+  padding: 15px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.number-btn {
+  transition: all 0.2s ease;
+}
+
+.number-btn:hover {
+  transform: scale(1.1);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+.number-btn:active {
+  transform: scale(0.95);
+}
+
+/* 运算图标样式 */
+.operation-icon {
+  animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+/* 游戏控制区域增强 */
+.game-controls {
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.game-controls .btn {
+  margin: 5px;
+  min-width: 100px;
+}
+
+/* 响应式游戏界面 */
+@media (max-width: 768px) {
+  .number-input-section {
+    max-width: 100%;
+    padding: 15px;
+  }
+
+  .question-math {
+    font-size: 24px;
+    padding: 15px;
+  }
+
+  .answer-input {
+    font-size: 20px;
+    width: 120px;
+  }
+
+  .number-pad {
+    gap: 8px;
+  }
+
+  .number-btn {
+    min-height: 45px;
+    font-size: 18px;
+  }
+}
+
+@media (max-width: 480px) {
+  .question-math {
+    font-size: 20px;
+    padding: 12px;
+  }
+
+  .answer-input {
+    font-size: 18px;
+    width: 100px;
+  }
+
+  .number-btn {
+    min-height: 40px;
+    font-size: 16px;
+  }
+}

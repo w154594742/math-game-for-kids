@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="趣味数学小天地 - 让孩子在游戏中快乐学习数学">
+    <meta name="keywords" content="儿童数学,数学游戏,教育游戏,加减乘除">
+    <meta name="author" content="趣味数学小天地">
+    <title>趣味数学小天地</title>
+    
+    <!-- 样式文件 -->
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/animations.css">
+    <link rel="stylesheet" href="css/scenes.css">
+
+    <!-- 场景专用样式文件 -->
+    <link rel="stylesheet" href="css/scenes/party-scene.css">
+    
+    <!-- 预加载关键资源 -->
+    <link rel="preload" href="js/app.js" as="script">
+    <link rel="preload" href="js/game-engine.js" as="script">
+</head>
+<body>
+    <div id="app">
+        <!-- 主页面 -->
+        <div id="home-view" class="view active">
+            <header class="game-header">
+                <h1>🎮 趣味数学小天地</h1>
+                <p class="subtitle">在游戏中快乐学习数学！</p>
+            </header>
+            
+            <main class="game-main">
+                <!-- 角色选择区域 -->
+                <section class="character-selection">
+                    <h2>选择你的学习伙伴</h2>
+                    <div class="character-grid">
+                        <div class="character-card" data-character="bear">
+                            <div class="character-avatar">🐻</div>
+                            <span>小熊</span>
+                        </div>
+                        <div class="character-card" data-character="cat">
+                            <div class="character-avatar">🐱</div>
+                            <span>小猫</span>
+                        </div>
+                        <div class="character-card" data-character="rabbit">
+                            <div class="character-avatar">🐰</div>
+                            <span>小兔</span>
+                        </div>
+                    </div>
+                </section>
+                
+                <!-- 运算类型选择 -->
+                <section class="operation-selection">
+                    <h2>选择练习类型</h2>
+                    <div class="operation-grid">
+                        <button class="btn btn-large operation-btn" data-operation="addition">
+                            ➕ 加法练习
+                        </button>
+                        <button class="btn btn-large operation-btn" data-operation="subtraction">
+                            ➖ 减法练习
+                        </button>
+                        <button class="btn btn-large operation-btn" data-operation="multiplication">
+                            ✖️ 乘法练习
+                        </button>
+                        <button class="btn btn-large operation-btn" data-operation="division">
+                            ➗ 除法练习
+                        </button>
+                    </div>
+                </section>
+                
+                <!-- 难度选择 -->
+                <section class="difficulty-selection">
+                    <h2>选择难度级别</h2>
+                    <div class="difficulty-grid">
+                        <button class="btn btn-secondary difficulty-btn" data-difficulty="1">
+                            🌟 启蒙级<br><small>10以内</small>
+                        </button>
+                        <button class="btn btn-secondary difficulty-btn" data-difficulty="2">
+                            ⭐⭐ 入门级<br><small>20以内</small>
+                        </button>
+                        <button class="btn btn-secondary difficulty-btn" data-difficulty="3">
+                            ⭐⭐⭐ 进阶级<br><small>100以内</small>
+                        </button>
+                    </div>
+                </section>
+                
+                <!-- 开始游戏按钮 -->
+                <section class="start-section">
+                    <button id="start-game-btn" class="btn btn-success btn-large" disabled>
+                        🚀 开始游戏
+                    </button>
+                </section>
+            </main>
+        </div>
+        
+        <!-- 游戏页面 -->
+        <div id="game-view" class="view">
+            <!-- 游戏头部信息 -->
+            <header class="game-header">
+                <div class="game-info">
+                    <div class="score-info">
+                        <span>得分: </span>
+                        <span id="current-score" class="score-number">0</span>
+                    </div>
+                    <div class="progress-info">
+                        <span>进度: </span>
+                        <span id="question-progress">1/10</span>
+                    </div>
+                    <div class="streak-info">
+                        <span>连击: </span>
+                        <span id="current-streak">0</span>
+                    </div>
+                </div>
+            </header>
+            
+            <!-- 场景背景容器 -->
+            <div id="scene-container" class="scene-container">
+                <!-- 动态加载不同场景背景 -->
+            </div>
+            
+
+            
+            <!-- 游戏控制区 -->
+            <div id="game-controls" class="game-controls">
+                <button id="reset-question-btn" class="btn">🔄 重新开始</button>
+                <button id="back-home-btn" class="btn btn-secondary">🏠 返回主页</button>
+            </div>
+        </div>
+        
+        <!-- 结果页面 -->
+        <div id="result-view" class="view">
+            <header class="game-header">
+                <h1>🎉 游戏结束！</h1>
+            </header>
+            
+            <main class="result-main">
+                <!-- 成绩统计 -->
+                <section class="score-summary">
+                    <div class="final-score">
+                        <h2>最终得分</h2>
+                        <div id="final-score-number" class="big-number">0</div>
+                    </div>
+                    
+                    <div class="stats-grid">
+                        <div class="stat-item">
+                            <div class="stat-label">正确率</div>
+                            <div id="accuracy-percentage" class="stat-value">0%</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-label">最高连击</div>
+                            <div id="max-streak" class="stat-value">0</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-label">用时</div>
+                            <div id="total-time" class="stat-value">0秒</div>
+                        </div>
+                    </div>
+                </section>
+                
+                <!-- 奖励展示 -->
+                <section class="rewards-section">
+                    <h3>🏆 获得奖励</h3>
+                    <div id="achievements-list" class="achievements-list">
+                        <!-- 动态显示获得的成就 -->
+                    </div>
+                </section>
+                
+                <!-- 继续游戏选项 -->
+                <section class="continue-section">
+                    <button id="play-again-btn" class="btn btn-success btn-large">
+                        🔄 再玩一次
+                    </button>
+                    <button id="change-settings-btn" class="btn btn-secondary">
+                        ⚙️ 更换设置
+                    </button>
+                    <button id="view-progress-btn" class="btn">
+                        📊 查看进度
+                    </button>
+                </section>
+            </main>
+        </div>
+        
+        <!-- 设置页面 -->
+        <div id="settings-view" class="view">
+            <header class="game-header">
+                <h1>⚙️ 游戏设置</h1>
+            </header>
+            
+            <main class="settings-main">
+                <section class="settings-section">
+                    <div class="setting-item">
+                        <label for="sound-toggle">🔊 音效</label>
+                        <input type="checkbox" id="sound-toggle" checked>
+                    </div>
+                    
+                    <div class="setting-item">
+                        <label for="session-length">📝 每轮题目数量</label>
+                        <select id="session-length">
+                            <option value="5">5题</option>
+                            <option value="10" selected>10题</option>
+                            <option value="15">15题</option>
+                            <option value="20">20题</option>
+                        </select>
+                    </div>
+                    
+                    <div class="setting-item">
+                        <label for="difficulty-mode">🎯 难度模式</label>
+                        <select id="difficulty-mode">
+                            <option value="auto" selected>自动调整</option>
+                            <option value="fixed">固定难度</option>
+                        </select>
+                    </div>
+                </section>
+                
+                <section class="data-section">
+                    <h3>📊 数据管理</h3>
+                    <button id="export-data-btn" class="btn">📤 导出数据</button>
+                    <button id="import-data-btn" class="btn">📥 导入数据</button>
+                    <button id="reset-data-btn" class="btn btn-secondary">🗑️ 重置数据</button>
+                </section>
+                
+                <section class="back-section">
+                    <button id="back-from-settings-btn" class="btn btn-success">
+                        ← 返回主页
+                    </button>
+                </section>
+            </main>
+        </div>
+    </div>
+    
+    <!-- 加载提示 -->
+    <div id="loading" class="loading-overlay" style="display: none;">
+        <div class="loading-content">
+            <div class="loading-spinner"></div>
+            <p>正在加载...</p>
+        </div>
+    </div>
+    
+    <!-- JavaScript文件 -->
+    <script src="js/game-engine.js"></script>
+    <script src="js/ui-manager.js"></script>
+    <!-- 场景配置和基础类 -->
+    <script src="js/config/scene-items.js"></script>
+    <script src="js/scenes/base-scene.js"></script>
+    <!-- 具体场景类 -->
+    <script src="js/scenes/shopping-scene.js"></script>
+    <script src="js/scenes/sharing-scene.js"></script>
+    <script src="js/scenes/garden-scene.js"></script>
+    <script src="js/scenes/party-scene.js"></script>
+    <!-- 主管理器 -->
+    <script src="js/scene-manager.js"></script>
+    <script src="js/drag-drop-manager.js"></script>
+    <script src="js/audio-manager.js"></script>
+    <script src="js/data-manager.js"></script>
+    <script src="js/app.js"></script>
+    
+    <!-- 初始化脚本 -->
+    <script>
+        // 页面加载完成后初始化应用
+        document.addEventListener('DOMContentLoaded', async function() {
+            console.log('页面加载完成，开始初始化应用...');
+
+            try {
+                // 创建App实例
+                app = new App();
+                console.log('App实例已创建:', app);
+
+                // 将应用实例设为全局变量，方便调试
+                window.app = app;
+
+                // 初始化应用
+                await app.init();
+
+                console.log('应用初始化完成！');
+
+                // 显示初始化成功信息（可选）
+                const initMessage = document.createElement('div');
+                initMessage.style.cssText = `
+                    position: fixed;
+                    top: 10px;
+                    right: 10px;
+                    background: #4CAF50;
+                    color: white;
+                    padding: 10px;
+                    border-radius: 5px;
+                    font-size: 12px;
+                    z-index: 10000;
+                    opacity: 0.9;
+                `;
+                initMessage.textContent = '✅ 应用初始化成功';
+                document.body.appendChild(initMessage);
+
+                // 3秒后移除提示
+                setTimeout(() => {
+                    if (initMessage.parentNode) {
+                        initMessage.parentNode.removeChild(initMessage);
+                    }
+                }, 3000);
+
+            } catch (error) {
+                console.error('应用初始化失败:', error);
+
+                // 显示详细的错误信息
+                const errorDiv = document.createElement('div');
+                errorDiv.style.cssText = `
+                    position: fixed;
+                    top: 50%;
+                    left: 50%;
+                    transform: translate(-50%, -50%);
+                    background: #f44336;
+                    color: white;
+                    padding: 20px;
+                    border-radius: 10px;
+                    max-width: 500px;
+                    z-index: 10000;
+                    text-align: center;
+                `;
+                errorDiv.innerHTML = `
+                    <h3>❌ 应用初始化失败</h3>
+                    <p>错误信息: ${error.message}</p>
+                    <p>请按F12打开开发者工具查看详细错误信息</p>
+                    <button onclick="location.reload()" style="
+                        background: white;
+                        color: #f44336;
+                        border: none;
+                        padding: 10px 20px;
+                        border-radius: 5px;
+                        cursor: pointer;
+                        margin-top: 10px;
+                    ">刷新页面</button>
+                `;
+                document.body.appendChild(errorDiv);
+            }
+        });
+    </script>
+</body>
+</html>
