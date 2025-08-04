@@ -1516,6 +1516,14 @@ class UIManager {
    * 初始化游戏控制按钮
    */
   initGameControls() {
+    // 提示按钮
+    const hintBtn = document.getElementById('hint-btn');
+    if (hintBtn) {
+      hintBtn.onclick = () => this.showHint();
+      // 添加点击效果
+      this.addButtonClickEffect(hintBtn);
+    }
+
     // 重新开始按钮
     const resetBtn = document.getElementById('reset-question-btn');
     if (resetBtn) {
@@ -1529,7 +1537,87 @@ class UIManager {
     }
   }
 
+  /**
+   * 显示提示
+   */
+  showHint() {
+    try {
+      console.log('🎯 提示按钮被点击');
 
+      // 检查SceneManager是否存在
+      if (!window.app || !window.app.sceneManager) {
+        console.error('SceneManager不存在');
+        this.showMessage('场景管理器未初始化');
+        return;
+      }
+
+      const sceneManager = window.app.sceneManager;
+      const currentScene = sceneManager.currentScene;
+
+      console.log('当前场景信息:', currentScene);
+
+      // 检查当前场景是否存在
+      if (!currentScene) {
+        console.error('当前场景不存在');
+        this.showMessage('当前没有活动场景');
+        return;
+      }
+
+      console.log('场景类型:', currentScene.type);
+
+      // 检查是否是减法场景
+      if (currentScene.type !== 'sharing') {
+        console.log('不是减法场景，当前场景类型:', currentScene.type);
+        this.showMessage('提示功能仅在减法场景中可用');
+        return;
+      }
+
+      // 获取减法场景实例
+      const sharingScene = sceneManager.scenes.sharing;
+      console.log('减法场景实例:', sharingScene);
+
+      if (!sharingScene) {
+        console.error('减法场景实例不存在');
+        this.showMessage('减法场景未正确初始化');
+        return;
+      }
+
+      // 检查showHint方法是否存在
+      if (typeof sharingScene.showHint !== 'function') {
+        console.error('showHint方法不存在');
+        this.showMessage('提示功能未正确实现');
+        return;
+      }
+
+      console.log('✅ 开始调用减法场景的showHint方法');
+
+      // 调用减法场景的提示功能
+      sharingScene.showHint();
+
+    } catch (error) {
+      console.error('显示提示功能出错:', error);
+      this.showMessage('提示功能出现错误，请重试');
+    }
+  }
+
+  /**
+   * 设置提示按钮状态
+   * @param {boolean} enabled - 是否启用
+   * @param {string} text - 按钮文本
+   */
+  setHintButtonState(enabled, text = '💡 提示') {
+    const hintBtn = document.getElementById('hint-btn');
+    if (hintBtn) {
+      hintBtn.disabled = !enabled;
+      hintBtn.textContent = text;
+
+      if (enabled) {
+        hintBtn.classList.remove('disabled');
+      } else {
+        hintBtn.classList.add('disabled');
+      }
+    }
+  }
 
   /**
    * 重置当前题目

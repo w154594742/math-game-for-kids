@@ -67,6 +67,22 @@ body {
   background-color: var(--success-color);
 }
 
+.btn-hint {
+  background-color: #FF9800;
+  color: white;
+}
+
+.btn-hint:hover {
+  background-color: #F57C00;
+}
+
+.btn.disabled,
+.btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
 .btn-large {
   padding: 16px 32px;
   font-size: 18px;
