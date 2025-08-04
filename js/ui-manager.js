@@ -1566,7 +1566,27 @@ class UIManager {
       console.log('场景类型:', currentScene.type);
 
       // 检查场景类型并调用对应的提示功能
-      if (currentScene.type === 'sharing') {
+      if (currentScene.type === 'shopping') {
+        // 加法场景
+        const shoppingScene = sceneManager.scenes.shopping;
+        console.log('加法场景实例:', shoppingScene);
+
+        if (!shoppingScene) {
+          console.error('加法场景实例不存在');
+          this.showMessage('加法场景未正确初始化');
+          return;
+        }
+
+        if (typeof shoppingScene.showHint !== 'function') {
+          console.error('加法场景showHint方法不存在');
+          this.showMessage('加法场景提示功能未正确实现');
+          return;
+        }
+
+        console.log('✅ 开始调用加法场景的showHint方法');
+        shoppingScene.showHint();
+
+      } else if (currentScene.type === 'sharing') {
         // 减法场景
         const sharingScene = sceneManager.scenes.sharing;
         console.log('减法场景实例:', sharingScene);
@@ -1608,7 +1628,7 @@ class UIManager {
 
       } else {
         console.log('不支持的场景类型:', currentScene.type);
-        this.showMessage('提示功能仅在减法和除法场景中可用');
+        this.showMessage('提示功能仅在加法、减法和除法场景中可用');
         return;
       }
 
