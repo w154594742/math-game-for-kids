@@ -35,12 +35,19 @@ class GardenScene extends BaseScene {
     // 创建数字拖拽区（顶部）
     this.createNumberDragArea(container);
 
-    // 创建题目文字
+    // 计算动态布局
+    const layout = this.calculateDynamicLayout(containerCount, itemsPerContainer);
+    console.log('乘法场景动态布局:', layout);
+
+    // 创建乘法容器（使用动态位置）
+    this.createContainersDisplayWithLayout(container, containerCount, itemsPerContainer, itemType, layout);
+
+    // 创建题目文字（使用动态位置）
     const questionText = document.createElement('div');
     questionText.className = 'question-text';
     questionText.style.cssText = `
       position: absolute;
-      top: 450px;
+      top: ${layout.questionTop}px;
       left: 50%;
       transform: translateX(-50%);
       background: rgba(255,255,255,0.95);
@@ -59,11 +66,11 @@ class GardenScene extends BaseScene {
     questionText.innerHTML = `${character.name}准备了${containerCount}个${itemType.containerName}，每个${itemType.containerName}里有${itemsPerContainer}个${itemType.itemName}，总共有多少个${itemType.itemName}？`;
     container.appendChild(questionText);
 
-    // 创建乘法容器
-    this.sceneManager.createContainersDisplay(container, containerCount, itemsPerContainer, itemType);
+    // 创建答案拖拽区（使用动态位置）
+    this.createAnswerDropArea(container, totalItems, layout.answerTop);
 
-    // 创建答案拖拽区
-    this.createAnswerDropArea(container, totalItems, 520);
+    // 设置容器的最小高度
+    container.style.minHeight = `${layout.minContainerHeight}px`;
 
     console.log(`花园场景渲染完成: ${containerCount} × ${itemsPerContainer} = ${totalItems}`);
   }
@@ -116,6 +123,183 @@ class GardenScene extends BaseScene {
     titleHeader.appendChild(title);
     titleHeader.appendChild(subtitle);
     container.appendChild(titleHeader);
+  }
+
+  /**
+   * 计算乘法场景的动态布局
+   * @param {number} containerCount - 容器数量
+   * @param {number} itemsPerContainer - 每个容器的物品数量
+   * @returns {Object} 布局信息
+   */
+  calculateDynamicLayout(containerCount, itemsPerContainer) {
+    // 基础位置
+    const numberDragTop = 80;
+    const containersStartTop = 180;
+
+    // 计算容器布局
+    const maxRows = 2;
+    const containersPerRow = containerCount <= 3 ? containerCount : Math.ceil(containerCount / maxRows);
+    const actualRows = Math.min(maxRows, Math.ceil(containerCount / containersPerRow));
+
+    // 计算容器尺寸
+    const minSize = 100;
+    const maxSize = 140;
+    const baseSize = 110;
+    const sizeIncrement = Math.min(8, itemsPerContainer * 3);
+    const containerSize = Math.min(maxSize, baseSize + sizeIncrement);
+
+    // 计算容器区域总高度
+    const containerGap = 15; // grid gap
+    const containersAreaHeight = actualRows * containerSize + (actualRows - 1) * containerGap;
+    const containersAreaBottom = containersStartTop + containersAreaHeight;
+
+    // 计算各区域位置
+    const minGap = 30; // 最小间距
+    const questionAreaHeight = 60; // 题目区域高度
+    const answerAreaHeight = 80; // 答案区域高度
+
+    // 题目区域紧跟容器区域
+    const questionTop = containersAreaBottom + minGap;
+
+    // 答案区域紧跟题目区域
+    const answerTop = questionTop + questionAreaHeight + minGap;
+
+    // 容器总高度（答案区域下面留10px底部边距）
+    const bottomMargin = 10;
+    const minContainerHeight = answerTop + answerAreaHeight + bottomMargin;
+
+    console.log(`乘法场景动态布局计算: 容器${containerCount}个, 布局${actualRows}行×${containersPerRow}列, 容器尺寸${containerSize}px, 容器区域高度${containersAreaHeight}px, 题目位置${questionTop}px, 答案位置${answerTop}px, 建议容器高度${minContainerHeight}px`);
+
+    return {
+      numberDragTop,
+      containersStartTop,
+      containersAreaHeight,
+      containersAreaBottom,
+      questionTop,
+      answerTop,
+      minContainerHeight,
+      containerLayout: {
+        rows: actualRows,
+        cols: containersPerRow,
+        containerSize,
+        gap: containerGap
+      }
+    };
+  }
+
+  /**
+   * 创建带动态布局的容器展示区
+   * @param {HTMLElement} container - 主容器
+   * @param {number} containerCount - 容器数量
+   * @param {number} itemsPerContainer - 每个容器内物品数量
+   * @param {Object} itemType - 物品类型信息
+   * @param {Object} layout - 布局信息
+   */
+  createContainersDisplayWithLayout(container, containerCount, itemsPerContainer, itemType, layout) {
+    const containersArea = document.createElement('div');
+    containersArea.className = 'containers-display';
+
+    containersArea.style.cssText = `
+      position: absolute;
+      top: ${layout.containersStartTop}px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: grid;
+      grid-template-columns: repeat(${layout.containerLayout.cols}, 1fr);
+      grid-template-rows: repeat(${layout.containerLayout.rows}, auto);
+      justify-items: center;
+      align-items: center;
+      gap: ${layout.containerLayout.gap}px;
+      max-width: 600px;
+      z-index: 5;
+      min-height: ${layout.containersAreaHeight}px;
+    `;
+
+    // 创建每个容器
+    for (let i = 0; i < containerCount; i++) {
+      const singleContainer = this.createSingleContainerWithSize(i, itemsPerContainer, itemType, layout.containerLayout.containerSize);
+      containersArea.appendChild(singleContainer);
+    }
+
+    container.appendChild(containersArea);
+  }
+
+  /**
+   * 创建指定尺寸的单个容器
+   * @param {number} index - 容器索引
+   * @param {number} itemCount - 容器内物品数量
+   * @param {Object} itemType - 物品类型信息
+   * @param {number} containerSize - 容器尺寸
+   * @returns {HTMLElement} 容器元素
+   */
+  createSingleContainerWithSize(index, itemCount, itemType, containerSize) {
+    const containerElement = document.createElement('div');
+    containerElement.className = 'single-container';
+
+    containerElement.style.cssText = `
+      width: ${containerSize}px;
+      height: ${containerSize}px;
+      background: rgba(255,255,255,0.95);
+      border: 3px solid #9C27B0;
+      border-radius: 15px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      position: relative;
+      overflow: hidden;
+    `;
+
+    // 容器标签
+    const containerLabel = document.createElement('div');
+    containerLabel.className = 'container-label';
+    containerLabel.style.cssText = `
+      position: absolute;
+      top: 5px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 10px;
+      font-weight: bold;
+      color: #9C27B0;
+      background: rgba(255,255,255,0.9);
+      padding: 2px 6px;
+      border-radius: 8px;
+      border: 1px solid #9C27B0;
+    `;
+    containerLabel.textContent = `${itemType.containerName}${index + 1}`;
+    containerElement.appendChild(containerLabel);
+
+    // 物品容器
+    const itemsContainer = document.createElement('div');
+    itemsContainer.className = 'container-items';
+    itemsContainer.style.cssText = `
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      align-items: center;
+      gap: 3px;
+      padding: 15px 5px 5px 5px;
+      width: 100%;
+      height: 100%;
+    `;
+
+    // 添加物品
+    for (let i = 0; i < itemCount; i++) {
+      const item = document.createElement('div');
+      item.className = 'container-item';
+      item.style.cssText = `
+        font-size: 14px;
+        line-height: 1;
+        user-select: none;
+      `;
+      // 兼容两种数据结构：旧的item是字符串，新的item是对象
+      item.textContent = typeof itemType.item === 'string' ? itemType.item : itemType.item.icon;
+      itemsContainer.appendChild(item);
+    }
+
+    containerElement.appendChild(itemsContainer);
+    return containerElement;
   }
 }
 

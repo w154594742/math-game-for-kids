@@ -637,7 +637,7 @@ class PartyScene extends BaseScene {
     const minGap = 15;               // 区域间最小间距
     const questionAreaHeight = 60;   // 问题区域高度
     const answerAreaHeight = 80;     // 答案区域高度
-    const bottomMargin = 20;         // 底部边距
+    const bottomMargin = 10;         // 底部边距
 
     // 计算托盘区域的实际高度（考虑CSS Grid的gap）
     const itemsPerRow = 9;           // 每行9个元素
