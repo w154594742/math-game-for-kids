@@ -1565,34 +1565,52 @@ class UIManager {
 
       console.log('场景类型:', currentScene.type);
 
-      // 检查是否是减法场景
-      if (currentScene.type !== 'sharing') {
-        console.log('不是减法场景，当前场景类型:', currentScene.type);
-        this.showMessage('提示功能仅在减法场景中可用');
+      // 检查场景类型并调用对应的提示功能
+      if (currentScene.type === 'sharing') {
+        // 减法场景
+        const sharingScene = sceneManager.scenes.sharing;
+        console.log('减法场景实例:', sharingScene);
+
+        if (!sharingScene) {
+          console.error('减法场景实例不存在');
+          this.showMessage('减法场景未正确初始化');
+          return;
+        }
+
+        if (typeof sharingScene.showHint !== 'function') {
+          console.error('减法场景showHint方法不存在');
+          this.showMessage('减法场景提示功能未正确实现');
+          return;
+        }
+
+        console.log('✅ 开始调用减法场景的showHint方法');
+        sharingScene.showHint();
+
+      } else if (currentScene.type === 'party') {
+        // 除法场景
+        const partyScene = sceneManager.scenes.party;
+        console.log('除法场景实例:', partyScene);
+
+        if (!partyScene) {
+          console.error('除法场景实例不存在');
+          this.showMessage('除法场景未正确初始化');
+          return;
+        }
+
+        if (typeof partyScene.showHint !== 'function') {
+          console.error('除法场景showHint方法不存在');
+          this.showMessage('除法场景提示功能未正确实现');
+          return;
+        }
+
+        console.log('✅ 开始调用除法场景的showHint方法');
+        partyScene.showHint();
+
+      } else {
+        console.log('不支持的场景类型:', currentScene.type);
+        this.showMessage('提示功能仅在减法和除法场景中可用');
         return;
       }
-
-      // 获取减法场景实例
-      const sharingScene = sceneManager.scenes.sharing;
-      console.log('减法场景实例:', sharingScene);
-
-      if (!sharingScene) {
-        console.error('减法场景实例不存在');
-        this.showMessage('减法场景未正确初始化');
-        return;
-      }
-
-      // 检查showHint方法是否存在
-      if (typeof sharingScene.showHint !== 'function') {
-        console.error('showHint方法不存在');
-        this.showMessage('提示功能未正确实现');
-        return;
-      }
-
-      console.log('✅ 开始调用减法场景的showHint方法');
-
-      // 调用减法场景的提示功能
-      sharingScene.showHint();
 
     } catch (error) {
       console.error('显示提示功能出错:', error);

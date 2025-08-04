@@ -6,6 +6,11 @@
 class PartyScene extends BaseScene {
   constructor(sceneManager, itemsConfig) {
     super(sceneManager, itemsConfig);
+
+    // 提示功能状态管理
+    this.isHintInProgress = false;
+    this.currentQuestion = null;
+    this.currentItemType = null;
   }
 
   /**
@@ -18,11 +23,15 @@ class PartyScene extends BaseScene {
     const plateCount = question.num2;
     const cakesPerPlate = Math.floor(totalCakes / plateCount);
 
+    // 保存当前题目和物品类型信息（用于提示功能）
+    this.currentQuestion = question;
+
     // 为容器添加除法场景类名
     container.classList.add('party-scene');
 
     // 随机选择物品类型
     const itemType = this.itemsConfig.getRandomDivisionItem();
+    this.currentItemType = itemType; // 保存物品类型信息
     console.log('除法场景选择的物品类型:', itemType);
 
     // 获取学习伙伴信息
@@ -147,7 +156,10 @@ class PartyScene extends BaseScene {
         margin-bottom: 5px;
         height: 15px;
       `;
-      plateTitle.textContent = `${itemType.containerName}${i + 1}`;
+
+      // 计算从左到右的序号（因为使用right定位，需要反转序号）
+      const visualIndex = this.calculateVisualIndex(i, plateLayout);
+      plateTitle.textContent = `${itemType.containerName}${visualIndex}`;
 
       // 创建盘子（不包含标题）
       const plate = document.createElement('div');
@@ -196,6 +208,399 @@ class PartyScene extends BaseScene {
     this.createAnswerDropArea(container, cakesPerPlate, dynamicLayout.answerTop);
 
     console.log(`派对场景渲染完成: ${totalCakes} ÷ ${plateCount} = ${cakesPerPlate}`);
+  }
+
+  /**
+   * 显示提示功能 - 自动演示除法分配过程
+   */
+  async showHint() {
+    try {
+      // 检查是否正在进行提示
+      if (this.isHintInProgress) {
+        console.log('提示功能正在进行中，请稍候...');
+        return;
+      }
+
+      // 检查必要的数据
+      if (!this.currentQuestion || !this.currentItemType) {
+        console.error('缺少必要的题目或物品类型信息');
+        if (window.uiManager) {
+          window.uiManager.showMessage('提示功能暂时不可用，请重新开始题目');
+        }
+        return;
+      }
+
+      console.log('🎯 开始除法提示演示:', this.currentQuestion);
+
+      // 设置提示状态
+      this.setHintState(true);
+
+      // 获取当前题目信息
+      const totalItems = this.currentQuestion.num1;
+      const plateCount = this.currentQuestion.num2;
+      const itemsPerPlate = this.currentQuestion.answer;
+
+      console.log(`提示演示: ${totalItems} ÷ ${plateCount} = ${itemsPerPlate}`);
+
+      // 开始轮流分配动画序列
+      await this.startDistributionAnimation();
+
+      // 显示提示文案
+      await this.showHintMessage();
+
+      console.log('✅ 除法提示演示完成');
+
+    } catch (error) {
+      console.error('除法提示功能执行出错:', error);
+
+      // 确保状态恢复
+      this.setHintState(false);
+
+      if (window.uiManager) {
+        window.uiManager.showMessage('提示功能出现问题，请重试');
+      }
+    }
+  }
+
+  /**
+   * 设置提示状态
+   * @param {boolean} inProgress - 是否正在进行提示
+   */
+  setHintState(inProgress) {
+    this.isHintInProgress = inProgress;
+
+    // 更新UI按钮状态
+    if (window.uiManager) {
+      if (inProgress) {
+        window.uiManager.setHintButtonState(false, '⏳ 演示中...');
+        // 禁用其他按钮
+        const resetBtn = document.getElementById('reset-question-btn');
+        const backBtn = document.getElementById('back-home-btn');
+        if (resetBtn) resetBtn.disabled = true;
+        if (backBtn) backBtn.disabled = true;
+      } else {
+        window.uiManager.setHintButtonState(true, '💡 提示');
+        // 恢复其他按钮
+        const resetBtn = document.getElementById('reset-question-btn');
+        const backBtn = document.getElementById('back-home-btn');
+        if (resetBtn) resetBtn.disabled = false;
+        if (backBtn) backBtn.disabled = false;
+      }
+    }
+  }
+
+  /**
+   * 开始轮流分配动画序列
+   */
+  async startDistributionAnimation() {
+    try {
+      console.log('🎬 开始轮流分配动画序列...');
+
+      // 获取托盘和盒子容器
+      const tray = document.querySelector('.party-scene .cake-tray');
+      const plates = document.querySelectorAll('.party-scene .party-plate');
+
+      if (!tray || plates.length === 0) {
+        console.error('找不到托盘或盒子，无法执行动画');
+        return;
+      }
+
+      // 获取托盘中的物品元素
+      const trayItems = Array.from(tray.children);
+      const plateCount = plates.length;
+
+      console.log(`🎬 分配动画: 托盘${trayItems.length}个物品, ${plateCount}个盒子`);
+
+      if (trayItems.length === 0) {
+        console.log('🎬 托盘已为空，无需动画');
+        return;
+      }
+
+      // 获取布局信息用于序号转换
+      const plateLayout = this.calculatePlateLayout(plateCount);
+
+      // 执行轮流分配动画
+      for (let i = 0; i < trayItems.length; i++) {
+        const currentItem = trayItems[i];
+
+        // 计算视觉序号（从1开始，轮流分配）
+        const visualPlateIndex = (i % plateCount) + 1;
+
+        // 根据视觉序号获取DOM索引
+        const domPlateIndex = this.getDOMIndexFromVisualIndex(visualPlateIndex, plateLayout);
+        const targetPlate = plates[domPlateIndex];
+
+        console.log(`🎬 第${i + 1}/${trayItems.length}次分配: 物品 → 盒子${visualPlateIndex} (DOM索引:${domPlateIndex})`);
+
+        // 高亮目标盒子
+        this.highlightPlate(targetPlate, true);
+
+        // 执行分配动画
+        await this.createDistributionAnimation(currentItem, targetPlate);
+
+        // 取消高亮
+        this.highlightPlate(targetPlate, false);
+
+        // 分配间隔
+        if (i < trayItems.length - 1) {
+          await new Promise(resolve => setTimeout(resolve, 300)); // 300ms间隔
+        }
+      }
+
+      console.log('🎬 轮流分配动画序列完成');
+
+    } catch (error) {
+      console.error('分配动画序列执行出错:', error);
+    }
+  }
+
+  /**
+   * 高亮盒子
+   * @param {HTMLElement} plate - 盒子元素
+   * @param {boolean} highlight - 是否高亮
+   */
+  highlightPlate(plate, highlight) {
+    if (highlight) {
+      plate.style.borderColor = '#FFD700';
+      plate.style.boxShadow = '0 0 20px rgba(255, 215, 0, 0.8)';
+      plate.style.borderWidth = '4px';
+    } else {
+      plate.style.borderColor = '#FF1493';
+      plate.style.boxShadow = '0 4px 12px rgba(0,0,0,0.2)';
+      plate.style.borderWidth = '3px';
+    }
+  }
+
+  /**
+   * 创建分配动画 - 从托盘到盒子的直线投递
+   * @param {HTMLElement} item - 要分配的物品元素
+   * @param {HTMLElement} targetPlate - 目标盒子
+   * @returns {Promise} 动画完成的Promise
+   */
+  createDistributionAnimation(item, targetPlate) {
+    return new Promise((resolve) => {
+      try {
+        // 获取起点和终点位置
+        const itemRect = item.getBoundingClientRect();
+        const plateRect = targetPlate.getBoundingClientRect();
+
+        console.log(`🚀 动画位置调试: 物品(${itemRect.left}, ${itemRect.top}, ${itemRect.width}x${itemRect.height}), 盒子(${plateRect.left}, ${plateRect.top}, ${plateRect.width}x${plateRect.height})`);
+
+        // 创建飞行元素
+        const flyingItem = item.cloneNode(true);
+        flyingItem.className = 'flying-distribution-item';
+
+        // 设置飞行元素的初始位置
+        flyingItem.style.cssText = `
+          position: fixed;
+          left: ${itemRect.left}px;
+          top: ${itemRect.top}px;
+          width: ${itemRect.width}px;
+          height: ${itemRect.height}px;
+          z-index: 1000;
+          pointer-events: none;
+          font-size: ${getComputedStyle(item).fontSize};
+          transition: none;
+        `;
+
+        // 添加到页面
+        document.body.appendChild(flyingItem);
+
+        // 计算目标位置（盒子中心）
+        const targetX = plateRect.left + plateRect.width / 2 - itemRect.width / 2;
+        const targetY = plateRect.top + plateRect.height / 2 - itemRect.height / 2;
+
+        // 计算移动距离
+        const deltaX = targetX - itemRect.left;
+        const deltaY = targetY - itemRect.top;
+        const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+
+        console.log(`🚀 分配动画: 从(${itemRect.left}, ${itemRect.top}) 到 (${targetX}, ${targetY}), 距离: ${distance.toFixed(2)}px`);
+
+        // 确保有足够的移动距离才执行动画
+        if (distance < 10) {
+          console.warn('🚀 移动距离太小，跳过动画');
+          // 直接完成处理
+          this.completeDistributionAnimation(item, targetPlate, flyingItem);
+          resolve();
+          return;
+        }
+
+        // 启动分配动画
+        requestAnimationFrame(() => {
+          flyingItem.style.transition = 'all 0.8s ease-out'; // 增加动画时长
+          flyingItem.style.left = `${targetX}px`;
+          flyingItem.style.top = `${targetY}px`;
+          flyingItem.style.transform = 'scale(1.1)';
+          flyingItem.style.opacity = '0.9';
+        });
+
+        // 动画完成后处理
+        setTimeout(() => {
+          this.completeDistributionAnimation(item, targetPlate, flyingItem);
+          resolve();
+        }, 800); // 与动画时长一致
+
+      } catch (error) {
+        console.error('创建分配动画出错:', error);
+        resolve();
+      }
+    });
+  }
+
+  /**
+   * 完成分配动画的后续处理
+   * @param {HTMLElement} originalItem - 原始物品元素
+   * @param {HTMLElement} targetPlate - 目标盒子
+   * @param {HTMLElement} flyingItem - 飞行元素
+   */
+  completeDistributionAnimation(originalItem, targetPlate, flyingItem) {
+    try {
+      // 隐藏原始物品
+      originalItem.style.visibility = 'hidden';
+
+      // 在目标盒子中添加物品
+      const plateItems = targetPlate.querySelector('.plate-items');
+      if (plateItems) {
+        const newItem = originalItem.cloneNode(true);
+        newItem.style.visibility = 'visible';
+        newItem.style.fontSize = '16px'; // 适应盒子内的大小
+        newItem.style.transition = 'none'; // 移除transition避免干扰
+        plateItems.appendChild(newItem);
+      }
+
+      // 清理飞行元素
+      if (flyingItem && flyingItem.parentNode) {
+        flyingItem.parentNode.removeChild(flyingItem);
+      }
+
+      console.log('🚀 分配动画完成并清理');
+
+    } catch (cleanupError) {
+      console.error('分配动画清理出错:', cleanupError);
+    }
+  }
+
+  /**
+   * 显示提示文案并恢复状态
+   */
+  async showHintMessage() {
+    try {
+      console.log('💬 显示除法提示文案...');
+
+      // 获取提示文案（使用动态模板）
+      const containerName = this.currentItemType.containerName;
+      const itemName = this.currentItemType.item.name;
+      const hintText = `小朋友，请数一数现在每个${containerName}里面有几个${itemName}吧？`;
+
+      console.log('提示文案:', hintText);
+
+      // 创建提示文案显示元素
+      const hintMessageElement = this.createHintMessageElement(hintText);
+
+      // 显示提示文案
+      await this.displayHintMessage(hintMessageElement);
+
+      console.log('💬 除法提示文案显示完成');
+
+    } catch (error) {
+      console.error('显示除法提示文案出错:', error);
+    } finally {
+      // 确保状态恢复
+      this.setHintState(false);
+    }
+  }
+
+  /**
+   * 创建提示文案显示元素
+   * @param {string} hintText - 提示文案
+   * @returns {HTMLElement} 提示文案元素
+   */
+  createHintMessageElement(hintText) {
+    const hintElement = document.createElement('div');
+    hintElement.className = 'division-hint-message';
+    hintElement.textContent = hintText;
+
+    // 设置样式
+    hintElement.style.cssText = `
+      position: absolute;
+      top: 480px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: linear-gradient(135deg, #FF1493, #FF69B4);
+      color: white;
+      padding: 15px 25px;
+      border-radius: 25px;
+      font-size: 18px;
+      font-weight: bold;
+      font-family: 'Comic Sans MS', cursive, sans-serif;
+      text-align: center;
+      box-shadow: 0 8px 25px rgba(255, 20, 147, 0.3);
+      z-index: 20;
+      max-width: 400px;
+      line-height: 1.4;
+      border: 3px solid rgba(255, 255, 255, 0.3);
+      opacity: 0;
+      transform: translateX(-50%) translateY(20px);
+      transition: all 0.5s ease-out;
+    `;
+
+    return hintElement;
+  }
+
+  /**
+   * 显示提示文案动画
+   * @param {HTMLElement} hintElement - 提示文案元素
+   * @returns {Promise} 显示完成的Promise
+   */
+  displayHintMessage(hintElement) {
+    return new Promise((resolve) => {
+      try {
+        // 获取场景容器
+        const sceneContainer = document.querySelector('.party-scene');
+        if (!sceneContainer) {
+          console.error('找不到场景容器');
+          resolve();
+          return;
+        }
+
+        // 添加到场景容器
+        sceneContainer.appendChild(hintElement);
+
+        // 触发进入动画
+        requestAnimationFrame(() => {
+          hintElement.style.opacity = '1';
+          hintElement.style.transform = 'translateX(-50%) translateY(0)';
+        });
+
+        console.log('💬 除法提示文案已显示，3秒后自动消失');
+
+        // 3秒后开始退出动画
+        setTimeout(() => {
+          hintElement.style.opacity = '0';
+          hintElement.style.transform = 'translateX(-50%) translateY(-20px)';
+
+          // 退出动画完成后移除元素
+          setTimeout(() => {
+            try {
+              if (hintElement && hintElement.parentNode) {
+                hintElement.parentNode.removeChild(hintElement);
+              }
+              console.log('💬 除法提示文案已移除');
+              resolve();
+            } catch (cleanupError) {
+              console.error('除法提示文案清理出错:', cleanupError);
+              resolve();
+            }
+          }, 500); // 退出动画时长
+
+        }, 3000); // 显示3秒
+
+      } catch (error) {
+        console.error('显示除法提示文案出错:', error);
+        resolve();
+      }
+    });
   }
 
   /**
@@ -336,6 +741,47 @@ class PartyScene extends BaseScene {
     const y = baseY + row * (plateSize.height + verticalSpacing);
 
     return { x, y };
+  }
+
+  /**
+   * 计算视觉序号（从左到右递增）
+   * @param {number} index - 循环索引
+   * @param {Object} layout - 布局信息
+   * @returns {number} 视觉序号
+   */
+  calculateVisualIndex(index, layout) {
+    const row = Math.floor(index / layout.cols);
+    const col = index % layout.cols;
+
+    // 由于使用right定位，同一行内的盒子从右到左排列
+    // 需要反转列序号，使序号从左到右递增
+    const reversedCol = layout.cols - 1 - col;
+    const visualIndex = row * layout.cols + reversedCol + 1;
+
+    return visualIndex;
+  }
+
+  /**
+   * 根据视觉序号获取DOM索引
+   * @param {number} visualIndex - 视觉序号（1开始）
+   * @param {Object} layout - 布局信息
+   * @returns {number} DOM索引（0开始）
+   */
+  getDOMIndexFromVisualIndex(visualIndex, layout) {
+    // 将视觉序号转换为0开始的索引
+    const zeroBasedVisualIndex = visualIndex - 1;
+
+    // 计算行和列
+    const row = Math.floor(zeroBasedVisualIndex / layout.cols);
+    const visualCol = zeroBasedVisualIndex % layout.cols;
+
+    // 反转列序号得到DOM列序号
+    const domCol = layout.cols - 1 - visualCol;
+
+    // 计算DOM索引
+    const domIndex = row * layout.cols + domCol;
+
+    return domIndex;
   }
 
   /**
