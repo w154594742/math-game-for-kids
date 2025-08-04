@@ -1626,9 +1626,29 @@ class UIManager {
         console.log('✅ 开始调用除法场景的showHint方法');
         partyScene.showHint();
 
+      } else if (currentScene.type === 'garden') {
+        // 乘法场景
+        const gardenScene = sceneManager.scenes.garden;
+        console.log('乘法场景实例:', gardenScene);
+
+        if (!gardenScene) {
+          console.error('乘法场景实例不存在');
+          this.showMessage('乘法场景未正确初始化');
+          return;
+        }
+
+        if (typeof gardenScene.showHint !== 'function') {
+          console.error('乘法场景showHint方法不存在');
+          this.showMessage('乘法场景提示功能未正确实现');
+          return;
+        }
+
+        console.log('✅ 开始调用乘法场景的showHint方法');
+        gardenScene.showHint();
+
       } else {
         console.log('不支持的场景类型:', currentScene.type);
-        this.showMessage('提示功能仅在加法、减法和除法场景中可用');
+        this.showMessage('提示功能仅在加法、减法、乘法和除法场景中可用');
         return;
       }
 

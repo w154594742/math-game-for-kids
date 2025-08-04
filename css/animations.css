@@ -277,3 +277,19 @@
 .fade-out {
   animation: fadeOut 0.5s ease-out forwards;
 }
+
+/* 脉冲动画 - 用于提示区域强调效果 */
+@keyframes pulse {
+  0% {
+    transform: translateX(-50%) scale(1);
+    box-shadow: 0 8px 25px rgba(156, 39, 176, 0.4);
+  }
+  50% {
+    transform: translateX(-50%) scale(1.05);
+    box-shadow: 0 12px 35px rgba(156, 39, 176, 0.6);
+  }
+  100% {
+    transform: translateX(-50%) scale(1);
+    box-shadow: 0 8px 25px rgba(156, 39, 176, 0.4);
+  }
+}
