@@ -44,12 +44,25 @@ class SharingScene extends BaseScene {
     // 创建数字拖拽区（顶部）
     this.createNumberDragArea(container);
 
-    // 创建题目文字
+    // 计算动态布局
+    const layout = this.calculateDynamicLayout(totalCount, removeCount);
+    console.log('减法场景动态布局:', layout);
+
+    // 随机选择一个动作
+    const randomAction = itemType.actions[Math.floor(Math.random() * itemType.actions.length)];
+
+    // 创建左边篮子（原始物品）
+    this.sceneManager.createAdaptiveBasket(container, 'left', totalCount, itemType.item, itemType);
+
+    // 创建右边篮子（被移除的物品），传递随机选择的动作
+    this.sceneManager.createSubtractionEatBasket(container, 'right', removeCount, itemType.item, itemType, character, randomAction);
+
+    // 创建题目文字（使用动态位置）
     const questionText = document.createElement('div');
     questionText.className = 'question-text';
     questionText.style.cssText = `
       position: absolute;
-      top: 450px;
+      top: ${layout.questionTop}px;
       left: 50%;
       transform: translateX(-50%);
       background: rgba(255,255,255,0.95);
@@ -65,20 +78,15 @@ class SharingScene extends BaseScene {
       max-width: 500px;
       line-height: 1.4;
     `;
-    
-    // 随机选择一个动作
-    const randomAction = itemType.actions[Math.floor(Math.random() * itemType.actions.length)];
+
     questionText.innerHTML = `${character.name}有${totalCount}个${itemType.item.name}，${randomAction}${removeCount}个，还剩多少个${itemType.item.name}？`;
     container.appendChild(questionText);
 
-    // 创建左边篮子（原始物品）
-    this.sceneManager.createAdaptiveBasket(container, 'left', totalCount, itemType.item, itemType);
+    // 创建答案拖拽区（使用动态位置）
+    this.createAnswerDropArea(container, remainingCount, layout.answerTop);
 
-    // 创建右边篮子（被移除的物品），传递随机选择的动作
-    this.sceneManager.createSubtractionEatBasket(container, 'right', removeCount, itemType.item, itemType, character, randomAction);
-
-    // 创建答案拖拽区
-    this.createAnswerDropArea(container, remainingCount, 520);
+    // 设置容器的最小高度
+    container.style.minHeight = `${layout.minContainerHeight}px`;
 
     console.log(`分享场景渲染完成: ${totalCount} - ${removeCount} = ${remainingCount}`);
   }
@@ -793,6 +801,60 @@ class SharingScene extends BaseScene {
         resolve();
       }
     });
+  }
+
+  /**
+   * 计算减法场景的动态布局
+   * @param {number} totalCount - 总物品数量
+   * @param {number} removeCount - 移除物品数量
+   * @returns {Object} 布局信息
+   */
+  calculateDynamicLayout(totalCount, removeCount) {
+    // 基础位置
+    const numberDragTop = 80;
+    const basketsStartTop = 180;
+
+    // 计算篮子区域高度
+    // 篮子高度基于物品数量动态计算，参考createAdaptiveBasket的逻辑
+    const maxItemsCount = Math.max(totalCount, removeCount);
+    const minBasketHeight = 120;
+    const maxBasketHeight = 200;
+    const baseHeight = 140;
+    const heightIncrement = Math.min(15, maxItemsCount * 4);
+    const basketHeight = Math.min(maxBasketHeight, baseHeight + heightIncrement);
+
+    // 篮子区域总高度（包括标签和间距）
+    const basketLabelHeight = 25; // 篮子标签高度
+    const basketsAreaHeight = basketLabelHeight + basketHeight;
+    const basketsAreaBottom = basketsStartTop + basketsAreaHeight;
+
+    // 计算各区域位置
+    const minGap = 30; // 最小间距
+    const questionAreaHeight = 60; // 题目区域高度
+    const answerAreaHeight = 80; // 答案区域高度
+    const bottomMargin = 10; // 底部边距
+
+    // 题目区域紧跟篮子区域
+    const questionTop = basketsAreaBottom + minGap;
+
+    // 答案区域紧跟题目区域
+    const answerTop = questionTop + questionAreaHeight + minGap;
+
+    // 容器总高度
+    const minContainerHeight = answerTop + answerAreaHeight + bottomMargin;
+
+    console.log(`减法场景动态布局计算: 总${totalCount}个, 移除${removeCount}个, 篮子高度${basketHeight}px, 篮子区域高度${basketsAreaHeight}px, 题目位置${questionTop}px, 答案位置${answerTop}px, 建议容器高度${minContainerHeight}px`);
+
+    return {
+      numberDragTop,
+      basketsStartTop,
+      basketsAreaHeight,
+      basketsAreaBottom,
+      questionTop,
+      answerTop,
+      minContainerHeight,
+      basketHeight
+    };
   }
 }
 
