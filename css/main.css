@@ -127,6 +127,10 @@ body {
 .start-section {
   margin-bottom: 25px;
   text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
 }
 
 .character-selection h2,

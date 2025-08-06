@@ -125,6 +125,11 @@ class App {
         }
       }
 
+      // 应用护眼模式设置
+      if (this.uiManager) {
+        this.uiManager.applyEyeCareMode(settings.eyeCareMode, settings.animationLevel);
+      }
+
       // 应用其他设置
       console.log('应用用户设置:', settings);
     }

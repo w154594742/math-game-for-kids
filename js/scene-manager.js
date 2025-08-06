@@ -364,25 +364,25 @@ class SceneManager {
     this.sceneConfigs = {
       shopping: {
         name: '快乐购物',
-        background: 'linear-gradient(135deg, #FFE5B4, #FFCC99)',
+        background: 'linear-gradient(135deg, #E8F5E8, #C8E6C8)',
         icon: '🛒',
         description: '在商店里购买物品'
       },
       sharing: {
         name: '分享时光',
-        background: 'linear-gradient(135deg, #E5F3FF, #B3D9FF)',
+        background: 'linear-gradient(135deg, #F0FFF0, #D4F4D4)',
         icon: '🍪',
         description: '和朋友分享食物'
       },
       garden: {
         name: '花园种植',
-        background: 'linear-gradient(135deg, #E5FFE5, #B3FFB3)',
+        background: 'linear-gradient(135deg, #E5FFE5, #B8E6B8)',
         icon: '🌸',
         description: '在花园里种植花朵'
       },
       party: {
         name: '公平分享',
-        background: 'linear-gradient(135deg, #FFE5F1, #FFB3D9)',
+        background: 'linear-gradient(135deg, #F5FFF5, #E0F2E0)',
         icon: '🎂',
         description: '在派对上分享蛋糕'
       }
@@ -465,7 +465,10 @@ class SceneManager {
       
       // 渲染新场景
       await this.renderScene(sceneType, question);
-      
+
+      // 确保护眼模式设置在场景切换后仍然有效
+      this.reapplyEyeCareMode();
+
       this.currentScene = {
         type: sceneType,
         operationType: operationType,
@@ -474,10 +477,25 @@ class SceneManager {
       
       console.log(`场景加载完成: ${sceneType}`);
       return Promise.resolve();
-      
+
     } catch (error) {
       console.error('场景加载失败:', error);
       return Promise.reject(error);
+    }
+  }
+
+  /**
+   * 重新应用护眼模式设置
+   */
+  reapplyEyeCareMode() {
+    try {
+      if (window.app && window.app.dataManager && window.app.uiManager) {
+        const settings = window.app.dataManager.getSettings();
+        window.app.uiManager.applyEyeCareMode(settings.eyeCareMode, settings.animationLevel);
+        console.log('护眼模式设置已重新应用');
+      }
+    } catch (error) {
+      console.error('重新应用护眼模式失败:', error);
     }
   }
 
@@ -534,8 +552,17 @@ class SceneManager {
     const sceneConfig = this.sceneConfigs[sceneType];
     if (!sceneConfig) return;
 
-    // 设置背景
-    container.style.background = sceneConfig.background;
+    // 检查是否启用护眼模式
+    const isEyeCareMode = document.body.classList.contains('eye-care-mode');
+
+    // 只在非护眼模式下设置背景，护眼模式由CSS控制
+    if (!isEyeCareMode) {
+      container.style.background = sceneConfig.background;
+    } else {
+      // 护眼模式下清除内联样式，让CSS接管
+      container.style.background = '';
+    }
+
     container.style.position = 'relative';
     container.style.overflow = 'hidden';
 

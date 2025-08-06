@@ -264,10 +264,10 @@ class UIManager {
     const sceneContainer = document.getElementById('scene-container');
     if (sceneContainer) {
       const backgroundColors = {
-        addition: 'linear-gradient(135deg, #FFE5B4, #FFCC99)',
-        subtraction: 'linear-gradient(135deg, #E5F3FF, #B3D9FF)',
-        multiplication: 'linear-gradient(135deg, #E5FFE5, #B3FFB3)',
-        division: 'linear-gradient(135deg, #FFE5F1, #FFB3D9)'
+        addition: 'linear-gradient(135deg, #E8F5E8, #C8E6C8)',
+        subtraction: 'linear-gradient(135deg, #F0FFF0, #D4F4D4)',
+        multiplication: 'linear-gradient(135deg, #E5FFE5, #B8E6B8)',
+        division: 'linear-gradient(135deg, #F5FFF5, #E0F2E0)'
       };
 
       sceneContainer.style.background = backgroundColors[question.type] || backgroundColors.addition;
@@ -1038,6 +1038,9 @@ class UIManager {
       // 初始化主页面交互
       this.initHomePageInteractions();
 
+      // 初始化设置页面交互
+      this.initSettingsPageInteractions();
+
       console.log('UI事件监听器初始化完成');
     } catch (error) {
       console.error('UI事件监听器初始化失败:', error);
@@ -1244,7 +1247,9 @@ class UIManager {
     const settingsBtn = document.getElementById('settings-btn');
     if (settingsBtn) {
       settingsBtn.addEventListener('click', () => {
-        this.switchView('settings');
+        if (window.app) {
+          window.app.showView('settings');
+        }
       });
     }
   }
@@ -1751,10 +1756,139 @@ class UIManager {
         sessionLength.value = settings.sessionLength;
       }
 
-      const difficultyMode = document.getElementById('difficulty-mode');
-      if (difficultyMode) {
-        difficultyMode.value = settings.difficulty;
+      // 护眼模式设置
+      const eyeCareToggle = document.getElementById('eye-care-toggle');
+      if (eyeCareToggle) {
+        eyeCareToggle.checked = settings.eyeCareMode || false;
       }
+
+      const animationLevel = document.getElementById('animation-level');
+      if (animationLevel) {
+        animationLevel.value = settings.animationLevel || 'full';
+      }
+
+      // 应用护眼模式
+      this.applyEyeCareMode(settings.eyeCareMode, settings.animationLevel);
+    }
+  }
+
+  /**
+   * 应用护眼模式
+   * @param {boolean} eyeCareMode - 是否启用护眼模式
+   * @param {string} animationLevel - 动画级别
+   */
+  applyEyeCareMode(eyeCareMode, animationLevel = 'full') {
+    const body = document.body;
+
+    // 移除所有相关类名
+    body.classList.remove('eye-care-mode', 'reduced-animation', 'minimal-animation', 'eye-care-transition');
+
+    // 添加过渡效果
+    body.classList.add('eye-care-transition');
+
+    // 应用护眼模式
+    if (eyeCareMode) {
+      body.classList.add('eye-care-mode');
+    }
+
+    // 应用动画级别
+    switch (animationLevel) {
+      case 'reduced':
+        body.classList.add('reduced-animation');
+        break;
+      case 'minimal':
+        body.classList.add('minimal-animation');
+        break;
+      case 'full':
+      default:
+        // 完整动画，不需要添加额外类名
+        break;
+    }
+
+    console.log(`护眼模式: ${eyeCareMode ? '开启' : '关闭'}, 动画级别: ${animationLevel}`);
+  }
+
+  /**
+   * 初始化设置页面交互
+   */
+  initSettingsPageInteractions() {
+    try {
+      // 护眼模式开关
+      const eyeCareToggle = document.getElementById('eye-care-toggle');
+      if (eyeCareToggle) {
+        eyeCareToggle.addEventListener('change', (e) => {
+          const eyeCareMode = e.target.checked;
+          console.log('护眼模式切换:', eyeCareMode);
+          this.saveEyeCareSetting('eyeCareMode', eyeCareMode);
+
+          // 获取当前动画级别
+          const animationLevel = document.getElementById('animation-level')?.value || 'full';
+          this.applyEyeCareMode(eyeCareMode, animationLevel);
+        });
+      } else {
+        console.warn('未找到护眼模式开关元素');
+      }
+
+      // 动画级别选择
+      const animationLevel = document.getElementById('animation-level');
+      if (animationLevel) {
+        animationLevel.addEventListener('change', (e) => {
+          const level = e.target.value;
+          this.saveEyeCareSetting('animationLevel', level);
+
+          // 获取当前护眼模式状态
+          const eyeCareMode = document.getElementById('eye-care-toggle')?.checked || false;
+          this.applyEyeCareMode(eyeCareMode, level);
+        });
+      }
+
+      // 音效开关
+      const soundToggle = document.getElementById('sound-toggle');
+      if (soundToggle) {
+        soundToggle.addEventListener('change', (e) => {
+          this.saveEyeCareSetting('soundEnabled', e.target.checked);
+        });
+      }
+
+      // 题目数量选择
+      const sessionLength = document.getElementById('session-length');
+      if (sessionLength) {
+        sessionLength.addEventListener('change', (e) => {
+          this.saveEyeCareSetting('sessionLength', parseInt(e.target.value));
+        });
+      }
+
+      // 返回按钮
+      const backBtn = document.getElementById('back-from-settings-btn');
+      if (backBtn) {
+        backBtn.addEventListener('click', () => {
+          if (window.app) {
+            window.app.showView('home');
+          }
+        });
+      }
+
+      console.log('设置页面交互初始化完成');
+    } catch (error) {
+      console.error('设置页面交互初始化失败:', error);
+    }
+  }
+
+  /**
+   * 保存护眼模式设置
+   * @param {string} key - 设置键名
+   * @param {any} value - 设置值
+   */
+  saveEyeCareSetting(key, value) {
+    try {
+      if (window.app && window.app.dataManager) {
+        const currentSettings = window.app.dataManager.getSettings();
+        const newSettings = { ...currentSettings, [key]: value };
+        window.app.dataManager.updateSettings(newSettings);
+        console.log(`设置已保存: ${key} = ${value}`);
+      }
+    } catch (error) {
+      console.error('保存设置失败:', error);
     }
   }
 

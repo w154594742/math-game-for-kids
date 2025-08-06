@@ -1,0 +1,218 @@
+/* 护眼模式样式文件 */
+
+/* 护眼模式基础样式 */
+.eye-care-mode {
+  /* 全局护眼色调调整 */
+  filter: brightness(0.9) contrast(0.85);
+}
+
+/* 护眼模式场景背景 - 统一深绿色系 */
+.eye-care-mode .scene-container.shopping-scene {
+  background: #D8EDD8 !important; /* 深绿色背景 */
+  animation: none !important; /* 移除所有背景动画 */
+}
+
+.eye-care-mode .scene-container.sharing-scene {
+  background: #E0F0E0 !important; /* 深绿色背景 */
+  animation: none !important;
+}
+
+.eye-care-mode .scene-container.garden-scene {
+  background: #D0E8D0 !important; /* 深绿色背景 */
+  animation: none !important;
+}
+
+.eye-care-mode .scene-container.party-scene {
+  background: #E8F2E8 !important; /* 深绿色背景 */
+  animation: none !important;
+}
+
+/* 护眼模式动画控制 */
+.eye-care-mode .title-header::before,
+.eye-care-mode .title-header::after {
+  animation: none !important; /* 移除星星闪烁 */
+}
+
+.eye-care-mode .question-text::before,
+.eye-care-mode .question-text::after {
+  animation: none !important; /* 移除云朵漂移 */
+}
+
+.eye-care-mode .basket-label::before,
+.eye-care-mode .basket-label::after {
+  animation: none !important; /* 移除装饰闪烁 */
+}
+
+.eye-care-mode .answer-drop-area::before {
+  animation: none !important; /* 移除目标弹跳 */
+}
+
+/* 护眼模式物品效果 */
+.eye-care-mode .basket-items .item {
+  animation: none !important; /* 移除物品发光 */
+  filter: none !important;
+}
+
+.eye-care-mode .number-box {
+  animation: none !important; /* 移除数字浮动 */
+}
+
+.eye-care-mode .adaptive-basket {
+  animation: none !important; /* 移除篮子呼吸 */
+}
+
+/* 减少动画模式 */
+.reduced-animation .title-header::before,
+.reduced-animation .title-header::after {
+  animation-duration: 4s !important; /* 减慢动画速度 */
+}
+
+.reduced-animation .question-text::before,
+.reduced-animation .question-text::after {
+  animation-duration: 12s !important; /* 减慢云朵动画 */
+}
+
+.reduced-animation .basket-items .item {
+  animation-duration: 6s !important; /* 减慢物品发光 */
+  filter: brightness(1) drop-shadow(0 0 3px rgba(255, 215, 0, 0.2)) !important;
+}
+
+.reduced-animation .number-box {
+  animation-duration: 6s !important; /* 减慢数字浮动 */
+}
+
+.reduced-animation .adaptive-basket {
+  animation-duration: 8s !important; /* 减慢篮子呼吸 */
+}
+
+/* 最少动画模式 */
+.minimal-animation .title-header::before,
+.minimal-animation .title-header::after,
+.minimal-animation .question-text::before,
+.minimal-animation .question-text::after,
+.minimal-animation .basket-label::before,
+.minimal-animation .basket-label::after,
+.minimal-animation .answer-drop-area::before {
+  animation: none !important;
+}
+
+.minimal-animation .basket-items .item {
+  animation: none !important;
+  filter: none !important;
+}
+
+.minimal-animation .number-box,
+.minimal-animation .adaptive-basket {
+  animation: none !important;
+}
+
+/* 保留必要的交互动画 */
+.minimal-animation .drag-element:hover,
+.reduced-animation .drag-element:hover {
+  transform: scale(1.05) !important;
+  transition: transform 0.2s ease !important;
+}
+
+.minimal-animation .drop-zone.drag-over,
+.reduced-animation .drop-zone.drag-over {
+  transform: scale(1.02) !important;
+  transition: transform 0.2s ease !important;
+}
+
+/* 护眼模式成功反馈优化 */
+.eye-care-mode .success-feedback {
+  background-color: #E8F5E8 !important; /* 柔和的绿色 */
+  animation-duration: 1s !important;
+}
+
+.eye-care-mode .firework-effect {
+  display: none !important; /* 移除烟花效果 */
+}
+
+.eye-care-mode .ripple-effect {
+  background: radial-gradient(circle, rgba(76, 175, 80, 0.3), transparent) !important;
+  animation-duration: 1s !important;
+}
+
+/* 护眼模式错误反馈优化 */
+.eye-care-mode .error-feedback {
+  background-color: #FFE8E8 !important; /* 柔和的红色 */
+  animation-duration: 0.8s !important;
+}
+
+/* 护眼模式文字优化 */
+.eye-care-mode .question-text {
+  background: rgba(255,255,255,0.9) !important;
+  border: 2px solid #E0E0E0 !important;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1) !important;
+}
+
+.eye-care-mode .scene-title {
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.05) !important;
+}
+
+/* 护眼模式按钮优化 */
+.eye-care-mode .btn {
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1) !important;
+}
+
+.eye-care-mode .btn:hover {
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15) !important;
+}
+
+/* 护眼模式拖拽元素优化 */
+.eye-care-mode .drag-element {
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1) !important;
+}
+
+.eye-care-mode .drag-element:hover {
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15) !important;
+}
+
+/* 护眼模式场景装饰优化 */
+.eye-care-mode .shopping-scene .title-header::before,
+.eye-care-mode .shopping-scene .title-header::after,
+.eye-care-mode .sharing-scene .title-header::before,
+.eye-care-mode .sharing-scene .title-header::after,
+.eye-care-mode .garden-scene .title-header::before,
+.eye-care-mode .garden-scene .title-header::after,
+.eye-care-mode .party-scene .title-header::before,
+.eye-care-mode .party-scene .title-header::after {
+  opacity: 0.6 !important; /* 降低装饰元素透明度 */
+}
+
+/* 响应式护眼模式 */
+@media (max-width: 768px) {
+  .eye-care-mode {
+    filter: brightness(0.95) contrast(0.9);
+  }
+}
+
+@media (max-width: 480px) {
+  .eye-care-mode {
+    filter: brightness(1) contrast(0.95);
+  }
+}
+
+/* 护眼模式过渡动画 */
+.eye-care-transition {
+  transition: filter 0.5s ease, background 0.5s ease !important;
+}
+
+/* 护眼模式指示器 */
+.eye-care-indicator {
+  position: fixed;
+  top: 10px;
+  right: 10px;
+  background: rgba(76, 175, 80, 0.9);
+  color: white;
+  padding: 5px 10px;
+  border-radius: 15px;
+  font-size: 12px;
+  z-index: 1000;
+  display: none;
+}
+
+.eye-care-mode .eye-care-indicator {
+  display: block;
+}

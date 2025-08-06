@@ -35,7 +35,9 @@ class DataManager {
         soundEnabled: true,
         difficulty: 'auto',
         sessionLength: 10,
-        theme: 'default'
+        theme: 'default',
+        eyeCareMode: false,
+        animationLevel: 'full' // 'full', 'reduced', 'minimal'
       },
       statistics: {
         totalPlayTime: 0,

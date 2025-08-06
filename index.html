@@ -13,6 +13,7 @@
     <link rel="stylesheet" href="css/components.css">
     <link rel="stylesheet" href="css/animations.css">
     <link rel="stylesheet" href="css/scenes.css">
+    <link rel="stylesheet" href="css/eye-care-mode.css">
 
     <!-- 场景专用样式文件 -->
     <link rel="stylesheet" href="css/scenes/party-scene.css">
@@ -22,6 +23,9 @@
     <link rel="preload" href="js/game-engine.js" as="script">
 </head>
 <body>
+    <!-- 护眼模式指示器 -->
+    <div class="eye-care-indicator">👁️ 护眼模式</div>
+
     <div id="app">
         <!-- 主页面 -->
         <div id="home-view" class="view active">
@@ -89,6 +93,9 @@
                 <section class="start-section">
                     <button id="start-game-btn" class="btn btn-success btn-large" disabled>
                         🚀 开始游戏
+                    </button>
+                    <button id="settings-btn" class="btn btn-secondary">
+                        ⚙️ 设置
                     </button>
                 </section>
             </main>
@@ -206,19 +213,29 @@
                     </div>
                     
                     <div class="setting-item">
-                        <label for="difficulty-mode">🎯 难度模式</label>
-                        <select id="difficulty-mode">
-                            <option value="auto" selected>自动调整</option>
-                            <option value="fixed">固定难度</option>
+                        <label for="eye-care-toggle">👁️ 护眼模式</label>
+                        <input type="checkbox" id="eye-care-toggle">
+                        <small class="setting-description">减少动画效果，使用护眼色彩</small>
+                    </div>
+
+                    <div class="setting-item">
+                        <label for="animation-level">🎬 动画效果</label>
+                        <select id="animation-level">
+                            <option value="full" selected>完整动画</option>
+                            <option value="reduced">减少动画</option>
+                            <option value="minimal">最少动画</option>
                         </select>
+                        <small class="setting-description">调整动画强度以保护视力</small>
                     </div>
                 </section>
                 
                 <section class="data-section">
                     <h3>📊 数据管理</h3>
-                    <button id="export-data-btn" class="btn">📤 导出数据</button>
-                    <button id="import-data-btn" class="btn">📥 导入数据</button>
-                    <button id="reset-data-btn" class="btn btn-secondary">🗑️ 重置数据</button>
+                    <div class="data-buttons">
+                        <button id="export-data-btn" class="btn">📤 导出数据</button>
+                        <button id="import-data-btn" class="btn">📥 导入数据</button>
+                        <button id="reset-data-btn" class="btn btn-secondary">🗑️ 重置数据</button>
+                    </div>
                 </section>
                 
                 <section class="back-section">

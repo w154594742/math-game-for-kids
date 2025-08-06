@@ -357,11 +357,7 @@
 
 /* ===== 加法场景优化样式 ===== */
 
-/* 渐变背景动画 */
-@keyframes gradientShift {
-  0%, 100% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-}
+/* 渐变背景动画 - 已移除，改为静态绿色背景 */
 
 /* 数字浮动动画 */
 @keyframes numberFloat {
@@ -404,11 +400,21 @@
   100% { transform: scale(3) rotate(360deg); opacity: 0; }
 }
 
-/* 加法场景背景优化 */
+/* 场景背景优化 - 统一绿色系 */
 .scene-container.shopping-scene {
-  background: linear-gradient(135deg, #FFE5B4 0%, #FFCC99 25%, #E5F3FF 50%, #B3D9FF 75%, #E5FFE5 100%);
-  background-size: 400% 400%;
-  animation: gradientShift 12s ease-in-out infinite;
+  background: linear-gradient(135deg, #E8F5E8, #C8E6C8);
+}
+
+.scene-container.sharing-scene {
+  background: linear-gradient(135deg, #F0FFF0, #D4F4D4);
+}
+
+.scene-container.garden-scene {
+  background: linear-gradient(135deg, #E5FFE5, #B8E6B8);
+}
+
+.scene-container.party-scene {
+  background: linear-gradient(135deg, #F5FFF5, #E0F2E0);
 }
 
 /* 标题区域优化 - 所有场景通用 */
