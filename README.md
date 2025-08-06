@@ -2,6 +2,12 @@
 
 让孩子在游戏中快乐学习数学的互动教育游戏
 
+## 🌐 在线体验
+
+**🎯 立即开始游戏：** [https://w154594742.github.io/math-game-for-kids/](https://w154594742.github.io/math-game-for-kids/)
+
+> 💡 无需下载安装，点击链接即可在浏览器中直接体验完整的数学学习游戏！
+
 ## 📖 项目简介
 
 趣味数学小天地是一个专为儿童设计的数学学习游戏，通过生动有趣的场景和互动体验，帮助孩子掌握基础的四则运算。
@@ -34,6 +40,12 @@
 - **模块化设计**：清晰的代码结构，易于维护
 - **响应式布局**：适配不同屏幕尺寸
 - **CSS3动画**：流畅的动画效果
+
+### 部署技术
+- **GitHub Pages**：免费的静态网站托管
+- **GitHub Actions**：自动化CI/CD部署流程
+- **零配置部署**：推送代码即自动更新线上版本
+- **全球CDN**：GitHub提供的全球内容分发网络
 
 ### 架构设计
 - **场景管理器**：统一管理四种运算场景
@@ -85,14 +97,47 @@
 - 响应式设计，支持桌面和移动设备
 - 无需安装，直接在浏览器中运行
 
+## 🌍 在线访问优势
+
+- **🚀 即开即用**：无需下载安装，点击链接即可开始学习
+- **📱 跨平台**：支持电脑、平板、手机等各种设备
+- **🔄 自动更新**：游戏内容和功能持续优化，自动获取最新版本
+- **🌐 随时随地**：只要有网络就能访问，学习不受地点限制
+- **💾 免存储**：不占用设备存储空间，绿色环保
+
 ## 🔧 开发说明
 
 本项目使用纯原生技术开发，无需构建工具，可直接在浏览器中运行。
 
 ### 本地运行
 1. 克隆项目到本地
+   ```bash
+   git clone https://github.com/w154594742/math-game-for-kids.git
+   cd math-game-for-kids
+   ```
 2. 使用本地服务器打开index.html（推荐使用Live Server）
 3. 或直接在浏览器中打开index.html文件
+
+### 🚀 自动部署
+
+本项目已配置GitHub Actions自动部署到GitHub Pages：
+
+#### 部署流程
+- **触发条件**：推送代码到 `main` 分支时自动触发
+- **部署地址**：[https://w154594742.github.io/math-game-for-kids/](https://w154594742.github.io/math-game-for-kids/)
+- **部署状态**：[![Deploy to GitHub Pages](https://github.com/w154594742/math-game-for-kids/actions/workflows/deploy.yml/badge.svg)](https://github.com/w154594742/math-game-for-kids/actions/workflows/deploy.yml)
+
+#### 手动部署
+如需手动触发部署：
+1. 进入GitHub仓库的 `Actions` 页面
+2. 选择 `Deploy to GitHub Pages` 工作流
+3. 点击 `Run workflow` 按钮
+
+#### 部署配置
+- **工作流文件**：`.github/workflows/deploy.yml`
+- **部署分支**：`main`
+- **部署方式**：GitHub Actions
+- **访问地址**：自动生成的GitHub Pages URL
 
 ## 📄 许可证
 
@@ -100,4 +145,17 @@
 
 ---
 
+## 🎯 快速开始
+
+**立即体验游戏：** [https://w154594742.github.io/math-game-for-kids/](https://w154594742.github.io/math-game-for-kids/)
+
 🎮 让我们一起在游戏中快乐学习数学吧！
+
+---
+
+### 📞 联系方式
+
+如有问题或建议，欢迎通过以下方式联系：
+- 📧 提交 [GitHub Issue](https://github.com/w154594742/math-game-for-kids/issues)
+- 🌟 给项目点个Star支持我们
+- 🔄 Fork项目参与开发
