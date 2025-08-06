@@ -437,6 +437,13 @@ class App {
    */
   submitAnswer(answer) {
     if (this.gameEngine) {
+      // 添加详细的提交日志
+      console.log('App.submitAnswer 调用:', {
+        answer: answer,
+        answerType: typeof answer,
+        timestamp: new Date().toISOString()
+      });
+
       const result = this.gameEngine.validateAnswer(answer);
 
       // 播放音效

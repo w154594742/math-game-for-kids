@@ -1523,10 +1523,27 @@ class SceneManager {
       }
     });
 
-    if (allFilled) {
-      const userAnswerNum = parseInt(userAnswer);
+    // 如果没有填完所有数字框，不进行检查
+    if (!allFilled || userAnswer === '') {
+      return;
+    }
 
-      if (userAnswerNum === correctAnswer) {
+    // 安全的数字转换
+    const numericAnswer = Number(userAnswer);
+    if (isNaN(numericAnswer)) {
+      console.error('数字答案转换失败:', userAnswer);
+      return;
+    }
+
+    if (allFilled) {
+      // 使用已经验证过的数字答案
+      console.log('数字答案检查:', {
+        userAnswer: userAnswer,
+        numericAnswer: numericAnswer,
+        correctAnswer: correctAnswer
+      });
+
+      if (numericAnswer === Number(correctAnswer)) {
         // 答案正确
         digitBoxes.forEach(box => {
           box.style.borderColor = '#4CAF50';
@@ -1543,9 +1560,9 @@ class SceneManager {
             `;
           }
 
-          // 自动提交答案
+          // 自动提交答案（提交用户的答案而不是正确答案）
           if (window.app) {
-            window.app.submitAnswer(correctAnswer);
+            window.app.submitAnswer(numericAnswer);
           }
         }, 500);
 
@@ -2612,7 +2629,13 @@ class SceneManager {
     }
 
     const question = this.currentScene.question;
-    return answer === question.answer;
+    const numericAnswer = Number(answer);
+    const correctAnswer = Number(question.answer);
+
+    // 使用安全的数字比较
+    return !isNaN(numericAnswer) &&
+           !isNaN(correctAnswer) &&
+           Math.abs(numericAnswer - correctAnswer) < 0.001;
   }
 
   /**

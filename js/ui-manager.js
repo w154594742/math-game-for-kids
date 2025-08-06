@@ -488,10 +488,22 @@ class UIManager {
     const input = document.getElementById('answer-input');
     if (!input) return;
 
-    const userAnswer = parseInt(input.value);
+    // 更安全的数字转换
+    const inputValue = input.value.trim();
+    if (inputValue === '') {
+      this.showMessage('请输入答案');
+      return;
+    }
 
+    const userAnswer = Number(inputValue);
     if (isNaN(userAnswer)) {
       this.showMessage('请输入一个有效的数字');
+      return;
+    }
+
+    // 检查是否为合理的整数
+    if (!Number.isFinite(userAnswer) || Math.abs(userAnswer - Math.round(userAnswer)) > 0.001) {
+      this.showMessage('请输入一个整数');
       return;
     }
 

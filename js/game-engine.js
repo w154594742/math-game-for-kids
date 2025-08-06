@@ -25,6 +25,11 @@ class GameEngine {
       totalTimeSpent: 0,
       streakCount: 0
     };
+
+    // 防重复提交机制
+    this.lastSubmissionTime = 0;
+    this.submissionCooldown = 500; // 500ms冷却时间
+    this.isProcessingAnswer = false;
   }
 
   /**
@@ -316,7 +321,7 @@ class GameEngine {
     // 除法题目限制在10以内，确保整除
     const limit = Math.min(maxNumber, 10);
 
-    // 先确定除数和商，再计算被除数
+    // 先确定除数和商，再计算被除数，确保整除
     num2 = Math.floor(Math.random() * limit) + 1; // 除数 1-10
     answer = Math.floor(Math.random() * limit) + 1; // 商 1-10
     num1 = num2 * answer; // 被除数 = 除数 × 商
@@ -326,6 +331,15 @@ class GameEngine {
       num2 = Math.floor(Math.random() * 5) + 1;
       answer = Math.floor(Math.random() * 5) + 1;
       num1 = num2 * answer;
+    }
+
+    // 双重验证：确保除法结果正确
+    const verifyAnswer = Math.floor(num1 / num2);
+    if (verifyAnswer !== answer || (num1 % num2) !== 0) {
+      // 如果验证失败，使用简单的除法题目
+      num2 = 2;
+      answer = 3;
+      num1 = 6;
     }
 
     // 随机选择故事文本
@@ -363,6 +377,26 @@ class GameEngine {
    * @returns {Object} 验证结果
    */
   validateAnswer(userAnswer) {
+    // 防重复提交检查
+    const currentTime = Date.now();
+    if (this.isProcessingAnswer ||
+        (currentTime - this.lastSubmissionTime) < this.submissionCooldown) {
+      console.log('答案提交过于频繁，忽略此次提交');
+      return {
+        isCorrect: false,
+        correctAnswer: null,
+        userAnswer: userAnswer,
+        points: 0,
+        timeSpent: 0,
+        streak: this.streak,
+        error: 'SUBMISSION_TOO_FREQUENT',
+        feedback: '请稍等片刻再提交答案'
+      };
+    }
+
+    this.isProcessingAnswer = true;
+    this.lastSubmissionTime = currentTime;
+
     // 输入验证
     const validationResult = this.validateUserInput(userAnswer);
     if (!validationResult.isValid) {
@@ -393,8 +427,23 @@ class GameEngine {
     }
 
     const normalizedUserAnswer = this.normalizeAnswer(userAnswer);
-    const isCorrect = normalizedUserAnswer === currentQuestion.answer;
+
+    // 安全的答案比较，处理数据类型不一致的情况
+    const correctAnswer = Number(currentQuestion.answer);
+    const isCorrect = !isNaN(normalizedUserAnswer) &&
+                     !isNaN(correctAnswer) &&
+                     Math.abs(normalizedUserAnswer - correctAnswer) < 0.001;
+
     const timeSpent = Date.now() - currentQuestion.startTime;
+
+    // 调试日志
+    console.log('答案验证:', {
+      userInput: userAnswer,
+      normalizedUserAnswer: normalizedUserAnswer,
+      correctAnswer: correctAnswer,
+      isCorrect: isCorrect,
+      questionType: currentQuestion.type
+    });
 
     let points = 0;
     let feedback = '';
@@ -418,6 +467,9 @@ class GameEngine {
     }
 
     this.currentQuestionIndex++;
+
+    // 重置处理状态
+    this.isProcessingAnswer = false;
 
     return {
       isCorrect: isCorrect,
@@ -443,7 +495,7 @@ class GameEngine {
    */
   validateUserInput(userAnswer) {
     // 检查是否为空或未定义
-    if (userAnswer === null || userAnswer === undefined) {
+    if (userAnswer === null || userAnswer === undefined || userAnswer === '') {
       return {
         isValid: false,
         error: 'EMPTY_ANSWER',
@@ -451,7 +503,7 @@ class GameEngine {
       };
     }
 
-    // 检查是否为数字
+    // 转换为数字并检查
     const numericAnswer = Number(userAnswer);
     if (isNaN(numericAnswer)) {
       return {
@@ -461,8 +513,9 @@ class GameEngine {
       };
     }
 
-    // 检查是否为整数
-    if (!Number.isInteger(numericAnswer)) {
+    // 检查是否接近整数（允许微小的浮点数误差）
+    const roundedAnswer = Math.round(numericAnswer);
+    if (Math.abs(numericAnswer - roundedAnswer) > 0.001) {
       return {
         isValid: false,
         error: 'NOT_INTEGER',
@@ -471,7 +524,7 @@ class GameEngine {
     }
 
     // 检查数字范围
-    if (numericAnswer < 0) {
+    if (roundedAnswer < 0) {
       return {
         isValid: false,
         error: 'NEGATIVE_NUMBER',
@@ -479,7 +532,7 @@ class GameEngine {
       };
     }
 
-    if (numericAnswer > 10000) {
+    if (roundedAnswer > 10000) {
       return {
         isValid: false,
         error: 'NUMBER_TOO_LARGE',
@@ -489,7 +542,7 @@ class GameEngine {
 
     return {
       isValid: true,
-      normalizedAnswer: numericAnswer
+      normalizedAnswer: roundedAnswer
     };
   }
 
@@ -499,7 +552,21 @@ class GameEngine {
    * @returns {number} 标准化后的答案
    */
   normalizeAnswer(userAnswer) {
-    return Math.round(Number(userAnswer));
+    // 处理null、undefined、空字符串
+    if (userAnswer === null || userAnswer === undefined || userAnswer === '') {
+      return NaN;
+    }
+
+    // 转换为数字
+    const numericAnswer = Number(userAnswer);
+
+    // 检查是否为有效数字
+    if (isNaN(numericAnswer)) {
+      return NaN;
+    }
+
+    // 确保返回整数，使用更安全的取整方法
+    return Math.floor(numericAnswer + 0.5);
   }
 
   /**
